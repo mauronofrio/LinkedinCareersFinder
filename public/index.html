@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Linkedin Careers Finder</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root{
+      --bg:#0b1220; --panel:#111827; --input:#1f2937; --ring:#6366f1;
+      --text:#e5e7eb; --muted:#94a3b8; --btn:#6366f1; --btnh:#7c83ff;
+      --menu:#0f172a; --menuItem:#1f2937; --menuItemHover:#2b3450;
+    }
+    html,body{ background:var(--bg); color:var(--text); }
+    .field { display:flex; flex-direction:column; gap:.4rem; }
+    .field-label{ color:var(--muted); font-size:.9rem; }
+    .ui-input{
+      background:var(--input)!important; color:var(--text)!important;
+      border:1px solid rgba(255,255,255,.08)!important; outline:none!important;
+      -webkit-appearance:none!important; appearance:none!important;
+      border-radius:.6rem; padding:0 .9rem; height:2.75rem;
+    }
+    .ui-input::placeholder{ color:var(--muted); opacity:.9; }
+    .ui-input:focus{ box-shadow:0 0 0 3px rgba(99,102,241,.35); border-color:var(--ring)!important; }
+    .btn-primary{ background:var(--btn); color:white; border-radius:.8rem; height:2.9rem; }
+    .btn-primary:hover{ background: var(--btnh); }
+
+    /* Fancy Select */
+    .fs-wrap{ position:relative; }
+    .fs-label{ color:var(--muted); font-size:.9rem; margin-bottom:.4rem; display:block; }
+    select.fancy-select.fs-hidden{ position:absolute; opacity:0; pointer-events:none; height:0; width:0; }
+    .fs-button{
+      width:100%; background:var(--input); color:var(--text);
+      border:1px solid rgba(255,255,255,.08); border-radius:.6rem;
+      padding:0 .9rem; height:2.75rem;
+      display:flex; align-items:center; justify-content:space-between; gap:.75rem; cursor:pointer;
+      text-align:left;
+    }
+    .fs-button:focus{ outline:none; box-shadow:0 0 0 3px rgba(99,102,241,.35); border-color:var(--ring); }
+    .fs-caret{ width:.65rem; height:.65rem; border-right:2px solid var(--muted); border-bottom:2px solid var(--muted); transform:rotate(45deg); }
+    .fs-list{
+      position:absolute; top:calc(100% + .35rem); left:0; right:0; z-index:40;
+      background:var(--menu); border:1px solid rgba(255,255,255,.08);
+      border-radius:.6rem; padding:.25rem; box-shadow:0 12px 24px rgba(0,0,0,.35);
+      max-height:16rem; overflow:auto; display:none;
+    }
+    .fs-wrap[aria-expanded="true"] .fs-list{ display:block; }
+    .fs-item{
+      background:var(--menuItem); color:var(--text); border-radius:.45rem;
+      padding:.55rem .65rem; margin:.15rem 0; cursor:pointer; user-select:none; line-height:1.2;
+      display:flex; align-items:center; gap:.5rem;
+    }
+    .fs-item:hover{ background:var(--menuItemHover); }
+    .fs-check { width:1rem; height:1rem; border:1.5px solid var(--muted); border-radius:.25rem;
+      display:inline-flex; align-items:center; justify-content:center; font-size:.75rem; color:white; }
+    .fs-item[data-selected="true"] .fs-check{ border-color:var(--ring); background:var(--ring); }
+    .fs-item[data-selected="true"] .fs-check::after{ content:"✓"; font-weight:bold; }
+  </style>
+</head>
+<body class="min-h-screen">
+  <header class="border-b border-white/10 bg-black/20 backdrop-blur sticky top-0 z-10">
+    <div class="max-w-6xl mx-auto px-4 py-4">
+      <h1 class="text-xl md:text-2xl font-semibold tracking-tight">Linkedin Careers Finder</h1>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 py-6">
+    <form id="f" class="grid gap-4 md:grid-cols-12 rounded-2xl p-5 shadow-xl ring-1"
+          style="background:var(--panel); box-shadow: 0 10px 30px rgba(0,0,0,.35); border-color: rgba(255,255,255,.08);">
+
+      <!-- Row 1 -->
+      <div class="field md:col-span-4">
+        <label class="field-label">Keyword</label>
+        <input class="ui-input" name="keywords" placeholder="e.g., Java, Spring, Kotlin" required>
+      </div>
+
+      <div class="field md:col-span-4">
+        <label class="field-label">Location</label>
+        <input class="ui-input" name="location" placeholder="e.g., Italy, Milan, Rome" required>
+      </div>
+
+      <div class="md:col-span-2 fs-wrap">
+        <label class="fs-label">Output language</label>
+        <select class="fancy-select" name="_l">
+          <option value="en_US" selected>English</option>
+          <option value="it_IT">Italiano</option>
+          <option value="fr_FR">Français</option>
+          <option value="de_DE">Deutsch</option>
+          <option value="es_ES">Español</option>
+        </select>
+      </div>
+
+      <div class="field md:col-span-2">
+        <label class="field-label">geoId (optional)</label>
+        <input class="ui-input" name="geoId" placeholder="e.g., Italy → 103350119" inputmode="numeric">
+      </div>
+
+      <!-- Row 2 -->
+      <div class="md:col-span-2 fs-wrap">
+        <label class="fs-label">Workplace</label>
+        <select class="fancy-select" name="f_WT" data-multi="true">
+          <option value="">Any</option>
+          <option value="1">On-site</option>
+          <option value="2">Remote</option>
+          <option value="3">Hybrid</option>
+        </select>
+      </div>
+
+      <div class="md:col-span-2 fs-wrap" id="tp-wrap">
+        <label class="fs-label">Time posted</label>
+        <select class="fancy-select" name="f_TPR" id="f_TPR_select">
+          <option value="">Any time</option>
+          <option value="r86400">Last 24h</option>
+          <option value="r604800">Last 7 days</option>
+          <option value="r2592000">Last 30 days</option>
+          <option value="__custom__">Custom…</option>
+        </select>
+      </div>
+
+      <div class="field md:col-span-2 hidden" id="customDaysField">
+        <label class="field-label">Custom days</label>
+        <input class="ui-input" id="customDaysInput" placeholder="e.g., 3 (days)" inputmode="numeric">
+      </div>
+
+      <div class="md:col-span-2 fs-wrap">
+        <label class="fs-label">Seniority</label>
+        <select class="fancy-select" name="f_E" data-multi="true">
+          <option value="">Any</option>
+          <option value="1">Internship</option>
+          <option value="2">Entry level</option>
+          <option value="3">Associate</option>
+          <option value="4">Mid-Senior</option>
+          <option value="5">Director</option>
+          <option value="6">Executive</option>
+        </select>
+      </div>
+
+      <div class="md:col-span-2 fs-wrap">
+        <label class="fs-label">Job type</label>
+        <select class="fancy-select" name="f_JT" data-multi="true">
+          <option value="">Any</option>
+          <option value="F">Full-time</option>
+          <option value="P">Part-time</option>
+          <option value="C">Contract</option>
+          <option value="T">Temporary</option>
+          <option value="I">Internship</option>
+          <option value="V">Volunteer</option>
+        </select>
+      </div>
+
+      <!-- UNUSED FILTERS -->
+      <details class="md:col-span-12 rounded-xl ring-1 px-4 py-3" style="border-color:rgba(255,255,255,.08); background:rgba(255,255,255,.02);">
+        <summary class="cursor-pointer select-none text-sm text-slate-300">Unused filters</summary>
+        <div class="grid gap-4 md:grid-cols-12 mt-4">
+          <div class="md:col-span-4 fs-wrap">
+            <label class="fs-label">Sort</label>
+            <select class="fancy-select" name="sortBy">
+              <option value="R" selected>Recent</option>
+              <option value="DD">Relevance</option>
+            </select>
+          </div>
+
+          <div class="field md:col-span-4">
+            <label class="field-label">Start (offset)</label>
+            <input class="ui-input" name="start" type="number" min="0" step="10" value="0" placeholder="e.g., 0, 10, 20">
+          </div>
+
+          <div class="field md:col-span-4">
+            <label class="field-label">Pages (×10)</label>
+            <input class="ui-input" name="pages" type="number" min="1" max="10" value="1" placeholder="e.g., 1–10">
+          </div>
+        </div>
+      </details>
+
+      <div class="md:col-span-12">
+        <button id="searchBtn" class="btn-primary w-full inline-flex items-center justify-center gap-2 px-4 transition">
+          <svg id="spinner" class="hidden animate-spin h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4A4 4 0 004 12z"></path>
+          </svg>
+          <span>Search</span>
+        </button>
+      </div>
+    </form>
+
+    <div id="count" class="mt-4 text-sm" style="color:var(--muted)"></div>
+
+    <div id="results" class="grid gap-4 mt-4 sm:grid-cols-2 lg:grid-cols-3"></div>
+
+    <!-- LOAD MORE -->
+    <div id="loadMoreWrap" class="mt-6 text-center hidden">
+      <button id="loadMoreBtn" class="btn-primary inline-flex items-center justify-center gap-2 px-4 transition">
+        <svg id="loadMoreSpinner" class="hidden animate-spin h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4A4 4 0 004 12z"></path>
+        </svg>
+        <span>Load more</span>
+      </button>
+    </div>
+
+    <div id="empty" class="hidden mt-8 text-center" style="color:var(--muted)">
+      <div class="text-2xl mb-2">No results</div>
+      <div class="text-sm opacity-80">Try changing filters.</div>
+    </div>
+  </main>
+
+<script>
+/* ------- FancySelect (single & multi) ------- */
+(function(){
+  const selects = [...document.querySelectorAll('select.fancy-select')];
+  selects.forEach(initFancy);
+
+  function initFancy(sel){
+    const wrap = sel.closest('.fs-wrap');
+    const isMulti = sel.matches('[data-multi="true"],[multiple]');
+
+    const hidden = document.createElement('input');
+    hidden.type = 'hidden';
+    hidden.name = sel.name;
+    sel.removeAttribute('name');
+    sel.insertAdjacentElement('afterend', hidden);
+
+    let selectedValues = new Set();
+    if (isMulti) { selectedValues = new Set(); hidden.value = ""; }
+    else { hidden.value = sel.value || (sel.options[0]?.value ?? ''); }
+
+    const currentText = () => {
+      if (!isMulti){
+        const idx = [...sel.options].findIndex(o => o.value === hidden.value);
+        return idx >= 0 ? sel.options[idx].textContent : (sel.options[0]?.textContent || 'Select');
+      }
+      if (!selectedValues.size) return "Any";
+      const labels = [...selectedValues].map(v => {
+        const opt = [...sel.options].find(o => o.value === v); return opt ? opt.textContent : v;
+      });
+      return labels.length <= 2 ? labels.join(", ") : labels.slice(0,2).join(", ") + ` +${labels.length-2}`;
+    };
+
+    const btn = document.createElement('button');
+    btn.type = 'button'; btn.className = 'fs-button';
+    btn.setAttribute('aria-haspopup','listbox'); btn.setAttribute('aria-expanded','false');
+    btn.innerHTML = `<span class="fs-button-text">${currentText()}</span><span class="fs-caret"></span>`;
+
+    const list = document.createElement('div');
+    list.className = 'fs-list'; list.setAttribute('role','listbox'); list.tabIndex = -1;
+
+    [...sel.options].forEach((opt,i)=>{
+      const item = document.createElement('div');
+      item.className = 'fs-item'; item.setAttribute('role','option');
+      item.dataset.value = opt.value; item.dataset.index = i;
+      item.innerHTML = isMulti && opt.value!=="" ? `<span class="fs-check"></span>${opt.textContent}` : opt.textContent;
+
+      const isSelected = !isMulti ? (opt.value === hidden.value) : selectedValues.has(opt.value);
+      if (isSelected) item.dataset.selected = 'true';
+
+      item.addEventListener('click',()=>{
+        if (!isMulti){
+          [...list.children].forEach(n=> n.dataset.selected = (n===item?'true':'false'));
+          hidden.value = opt.value; sel.value = opt.value;
+          updateBtn(); sel.dispatchEvent(new Event('change',{bubbles:true}));
+          close(); btn.focus();
+        } else {
+          if (!opt.value){
+            selectedValues.clear();
+            [...list.children].forEach(n=> n.dataset.selected = (n.dataset.value===""?'true':'false'));
+          } else {
+            if (selectedValues.has(opt.value)){ selectedValues.delete(opt.value); item.dataset.selected='false'; }
+            else { selectedValues.add(opt.value); item.dataset.selected='true';
+              const anyItem = [...list.children].find(n=> n.dataset.value===""); if (anyItem) anyItem.dataset.selected='false';
+            }
+          }
+          hidden.value = [...selectedValues].join(','); updateBtn();
+        }
+      });
+
+      list.appendChild(item);
+    });
+
+    wrap.appendChild(btn); wrap.appendChild(list);
+
+    function updateBtn(){ btn.querySelector('.fs-button-text').textContent = currentText(); }
+    function open(){ wrap.setAttribute('aria-expanded','true'); btn.setAttribute('aria-expanded','true');
+      const active = list.querySelector('[data-selected="true"]')||list.firstElementChild; active?.scrollIntoView({block:'nearest'});
+      document.addEventListener('click', onDoc, {capture:true}); document.addEventListener('keydown', onKey);
+    }
+    function close(){ wrap.setAttribute('aria-expanded','false'); btn.setAttribute('aria-expanded','false');
+      document.removeEventListener('click', onDoc, {capture:true}); document.removeEventListener('keydown', onKey);
+    }
+    function toggle(){ wrap.getAttribute('aria-expanded')==='true' ? close() : open(); }
+    function onDoc(e){ if(!wrap.contains(e.target)) close(); }
+    function onKey(e){
+      const items=[...list.querySelectorAll('.fs-item')]; const idx=items.findIndex(n=>n.dataset.selected==='true');
+      if(e.key==='Escape'){ close(); btn.focus(); }
+      else if(e.key==='Enter'){ close(); btn.focus(); }
+      else if(e.key==='ArrowDown'){ e.preventDefault(); const n=items[Math.min(idx+1,items.length-1)];
+        items.forEach(n=>n.removeAttribute('aria-activedescendant')); n.setAttribute('aria-activedescendant','true'); n.scrollIntoView({block:'nearest'});
+      } else if(e.key==='ArrowUp'){ e.preventDefault(); const p=items[Math.max(idx-1,0)];
+        items.forEach(n=>n.removeAttribute('aria-activedescendant')); p.setAttribute('aria-activedescendant','true'); p.scrollIntoView({block:'nearest'});
+      }
+    }
+    btn.addEventListener('click',toggle);
+
+    sel.classList.add('fs-hidden'); // hide original only after init
+  }
+})();
+
+/* ------- Time posted: custom days ------- */
+(function(){
+  const wrap = document.getElementById('tp-wrap');
+  const customField = document.getElementById('customDaysField');
+  const tpSelect = wrap.querySelector('select.fancy-select');
+  const reflect = v => customField.classList.toggle('hidden', v !== '__custom__');
+  reflect(tpSelect.value||"");
+  tpSelect.addEventListener('change', e => reflect(e.target.value));
+})();
+
+/* ------- Search + Load More ------- */
+let LAST_PARAMS = null;   // URLSearchParams dell'ultima ricerca
+let LAST_OFFSET = 0;      // offset interno per "Load more"
+const DISPLAYED_IDS = new Set();
+
+const resultsEl = document.getElementById('results');
+const countEl = document.getElementById('count');
+const emptyEl = document.getElementById('empty');
+const searchBtn = document.getElementById('searchBtn');
+const spinner = document.getElementById('spinner');
+
+const loadMoreWrap = document.getElementById('loadMoreWrap');
+const loadMoreBtn = document.getElementById('loadMoreBtn');
+const loadMoreSpinner = document.getElementById('loadMoreSpinner');
+
+function jobCard(j){
+  const cardBG = "background:var(--panel); border-color:rgba(255,255,255,.08)";
+  return `
+    <a href="${j.url}" target="_blank"
+       class="block group rounded-2xl p-4 transition ring-1 hover:ring-indigo-400/50 hover:shadow-lg"
+       style="${cardBG}">
+      <div class="flex items-center gap-3 mb-2">
+        ${j.logo ? `<img src="${j.logo}" alt="" class="h-10 w-10 rounded-md object-cover ring-1 ring-white/10 bg-[#1f2937]" />` : ''}
+        <div class="min-w-0">
+          <div class="text-xs uppercase tracking-wide mb-0.5" style="color:var(--muted)">${(j.company ?? '').replace(/\s+/g,' ').trim()}</div>
+          <div class="text-base font-semibold group-hover:text-indigo-200 truncate">${(j.title ?? '').replace(/\s+/g,' ').trim()}</div>
+        </div>
+      </div>
+      <div class="text-sm mt-1 truncate">${(j.location ?? '').replace(/\s+/g,' ').trim()}</div>
+      <div class="text-xs mt-2" style="color:var(--muted)">${j.date ?? ''}</div>
+    </a>`;
+}
+
+function updateCount(){
+  countEl.textContent = `${DISPLAYED_IDS.size} results`;
+}
+
+document.getElementById('f').addEventListener('submit', async (ev) => {
+  ev.preventDefault();
+
+  resultsEl.innerHTML = '';
+  DISPLAYED_IDS.clear();
+  loadMoreWrap.classList.add('hidden');
+  emptyEl.classList.add('hidden');
+  countEl.textContent = 'Searching...';
+
+  const fd = new FormData(ev.target);
+
+  // custom time posted
+  const fTPR = fd.get('f_TPR');
+  if (fTPR === '__custom__') {
+    const daysRaw = document.getElementById('customDaysInput').value.trim();
+    const days = Math.max(0, parseInt(daysRaw || '0', 10));
+    if (days > 0) fd.set('f_TPR', 'r' + String(days * 86400));
+    else fd.delete('f_TPR');
+  }
+
+  const params = new URLSearchParams(fd);
+  LAST_PARAMS = params;
+  LAST_OFFSET = parseInt(params.get('start') || '0', 10) || 0; // inizializza offset interno dal filtro corrente
+
+  spinner.classList.remove('hidden');
+  searchBtn.disabled = true;
+
+  const t0 = performance.now();
+  try{
+    const res = await fetch('/api/search?' + params.toString());
+    const data = await res.json();
+    const ms = Math.round(performance.now() - t0);
+
+    if (!Array.isArray(data) || data.length === 0) {
+      countEl.textContent = '0 results';
+      emptyEl.classList.remove('hidden');
+      return;
+    }
+
+    const toAppend = data.filter(j => j && j.id && !DISPLAYED_IDS.has(j.id));
+    toAppend.forEach(j => DISPLAYED_IDS.add(j.id));
+    resultsEl.innerHTML = toAppend.map(jobCard).join('');
+    countEl.textContent = `${DISPLAYED_IDS.size} results · ${ms} ms`;
+
+    // mostra "Load more" solo se la pagina è completa (10 elementi)
+    loadMoreWrap.classList.toggle('hidden', data.length !== 10);
+
+  }catch(e){
+    console.error(e);
+    countEl.textContent = 'Error while searching.';
+    emptyEl.classList.remove('hidden');
+  }finally{
+    spinner.classList.add('hidden');
+    searchBtn.disabled = false;
+  }
+});
+
+async function loadMore(){
+  loadMoreBtn.disabled = true;
+  loadMoreSpinner.classList.remove('hidden');
+
+  try{
+    // offset interno (non modificare l'input del form)
+    LAST_OFFSET += 10;
+
+    // costruisci i parametri dalla ricerca precedente, ma forza pages=1 e start=offset interno
+    const params = new URLSearchParams(LAST_PARAMS);
+    params.set('start', String(LAST_OFFSET));
+    params.set('pages', '1');
+
+    const res = await fetch('/api/search?' + params.toString());
+    const data = await res.json();
+
+    if (!Array.isArray(data) || data.length === 0) {
+      loadMoreWrap.classList.add('hidden');
+      return;
+    }
+
+    const toAppend = data.filter(j => j && j.id && !DISPLAYED_IDS.has(j.id));
+    toAppend.forEach(j => {
+      DISPLAYED_IDS.add(j.id);
+      resultsEl.insertAdjacentHTML('beforeend', jobCard(j));
+    });
+    updateCount();
+
+    loadMoreWrap.classList.toggle('hidden', data.length !== 10);
+
+  }catch(e){
+    console.error(e);
+    loadMoreWrap.classList.add('hidden');
+  }finally{
+    loadMoreSpinner.classList.add('hidden');
+    loadMoreBtn.disabled = false;
+  }
+}
+
+document.getElementById('loadMoreBtn').addEventListener('click', loadMore);
+</script>
+</body>
+</html>
