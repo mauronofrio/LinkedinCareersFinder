@@ -16,12 +16,12 @@
     .field-label{ color:var(--muted); font-size:.9rem; }
     .ui-input{
       background:var(--input)!important; color:var(--text)!important;
-      border:1px solid rgba(255,255,255,.08)!important; outline:none!important;
+      border:1px solid rgba(255,255,255,0.08)!important; outline:none!important;
       -webkit-appearance:none!important; appearance:none!important;
       border-radius:.6rem; padding:0 .9rem; height:2.75rem;
     }
     .ui-input::placeholder{ color:var(--muted); opacity:.9; }
-    .ui-input:focus{ box-shadow:0 0 0 3px rgba(99,102,241,.35); border-color:var(--ring)!important; }
+    .ui-input:focus{ box-shadow:0 0 0 3px rgba(99,102,241,0.35); border-color:var(--ring)!important; }
     .btn-primary{ background:var(--btn); color:white; border-radius:.8rem; height:2.9rem; }
     .btn-primary:hover{ background: var(--btnh); }
 
@@ -31,17 +31,17 @@
     select.fancy-select.fs-hidden{ position:absolute; opacity:0; pointer-events:none; height:0; width:0; }
     .fs-button{
       width:100%; background:var(--input); color:var(--text);
-      border:1px solid rgba(255,255,255,.08); border-radius:.6rem;
+      border:1px solid rgba(255,255,255,0.08); border-radius:.6rem;
       padding:0 .9rem; height:2.75rem;
       display:flex; align-items:center; justify-content:space-between; gap:.75rem; cursor:pointer;
       text-align:left;
     }
-    .fs-button:focus{ outline:none; box-shadow:0 0 0 3px rgba(99,102,241,.35); border-color:var(--ring); }
+    .fs-button:focus{ outline:none; box-shadow:0 0 0 3px rgba(99,102,241,0.35); border-color:var(--ring); }
     .fs-caret{ width:.65rem; height:.65rem; border-right:2px solid var(--muted); border-bottom:2px solid var(--muted); transform:rotate(45deg); }
     .fs-list{
       position:absolute; top:calc(100% + .35rem); left:0; right:0; z-index:40;
-      background:var(--menu); border:1px solid rgba(255,255,255,.08);
-      border-radius:.6rem; padding:.25rem; box-shadow:0 12px 24px rgba(0,0,0,.35);
+      background:var(--menu); border:1px solid rgba(255,255,255,0.08);
+      border-radius:.6rem; padding:.25rem; box-shadow:0 12px 24px rgba(0,0,0,0.35);
       max-height:16rem; overflow:auto; display:none;
     }
     .fs-wrap[aria-expanded="true"] .fs-list{ display:block; }
@@ -66,17 +66,17 @@
 
   <main class="max-w-6xl mx-auto px-4 py-6">
     <form id="f" class="grid gap-4 md:grid-cols-12 rounded-2xl p-5 shadow-xl ring-1"
-          style="background:var(--panel); box-shadow: 0 10px 30px rgba(0,0,0,.35); border-color: rgba(255,255,255,.08);">
+          style="background:var(--panel); box-shadow: 0 10px 30px rgba(0,0,0,0.35); border-color: rgba(255,255,255,0.08);">
 
       <!-- Row 1 -->
       <div class="field md:col-span-4">
         <label class="field-label">Keyword</label>
-        <input class="ui-input" name="keywords" placeholder="e.g., Java, Spring, Kotlin" required>
+        <input class="ui-input" name="keywords" placeholder="e.g. Java, Spring, Kotlin" required>
       </div>
 
       <div class="field md:col-span-4">
         <label class="field-label">Location</label>
-        <input class="ui-input" name="location" placeholder="e.g., Italy, Milan, Rome" required>
+        <input class="ui-input" name="location" placeholder="e.g. Italy, Milan, Rome" required>
       </div>
 
       <div class="md:col-span-2 fs-wrap">
@@ -92,7 +92,7 @@
 
       <div class="field md:col-span-2">
         <label class="field-label">geoId (optional)</label>
-        <input class="ui-input" name="geoId" placeholder="e.g., Italy → 103350119" inputmode="numeric">
+        <input class="ui-input" name="geoId" placeholder="e.g. Italy → 103350119" inputmode="numeric">
       </div>
 
       <!-- Row 2 -->
@@ -119,7 +119,7 @@
 
       <div class="field md:col-span-2 hidden" id="customDaysField">
         <label class="field-label">Custom days</label>
-        <input class="ui-input" id="customDaysInput" placeholder="e.g., 3 (days)" inputmode="numeric">
+        <input class="ui-input" id="customDaysInput" placeholder="e.g. 3 (days)" inputmode="numeric">
       </div>
 
       <div class="md:col-span-2 fs-wrap">
@@ -149,7 +149,7 @@
       </div>
 
       <!-- UNUSED FILTERS -->
-      <details class="md:col-span-12 rounded-xl ring-1 px-4 py-3" style="border-color:rgba(255,255,255,.08); background:rgba(255,255,255,.02);">
+      <details class="md:col-span-12 rounded-xl ring-1 px-4 py-3" style="border-color:rgba(255,255,255,0.08); background:rgba(255,255,255,0.02);">
         <summary class="cursor-pointer select-none text-sm text-slate-300">Unused filters</summary>
         <div class="grid gap-4 md:grid-cols-12 mt-4">
           <div class="md:col-span-4 fs-wrap">
@@ -162,12 +162,12 @@
 
           <div class="field md:col-span-4">
             <label class="field-label">Start (offset)</label>
-            <input class="ui-input" name="start" type="number" min="0" step="10" value="0" placeholder="e.g., 0, 10, 20">
+            <input class="ui-input" name="start" type="number" min="0" step="10" value="0" placeholder="e.g. 0, 10, 20">
           </div>
 
           <div class="field md:col-span-4">
             <label class="field-label">Pages (×10)</label>
-            <input class="ui-input" name="pages" type="number" min="1" max="10" value="1" placeholder="e.g., 1–10">
+            <input class="ui-input" name="pages" type="number" min="1" max="10" value="1" placeholder="e.g. 1–10">
           </div>
         </div>
       </details>
@@ -221,8 +221,12 @@
     sel.insertAdjacentElement('afterend', hidden);
 
     let selectedValues = new Set();
-    if (isMulti) { selectedValues = new Set(); hidden.value = ""; }
-    else { hidden.value = sel.value || (sel.options[0]?.value ?? ''); }
+    if (isMulti) {
+      selectedValues = new Set();
+      hidden.value = "";
+    } else {
+      hidden.value = sel.value || (sel.options[0]?.value ?? '');
+    }
 
     const currentText = () => {
       if (!isMulti){
@@ -231,71 +235,103 @@
       }
       if (!selectedValues.size) return "Any";
       const labels = [...selectedValues].map(v => {
-        const opt = [...sel.options].find(o => o.value === v); return opt ? opt.textContent : v;
+        const opt = [...sel.options].find(o => o.value === v);
+        return opt ? opt.textContent : v;
       });
-      return labels.length <= 2 ? labels.join(", ") : labels.slice(0,2).join(", ") + ` +${labels.length-2}`;
+      return labels.join(', ');
     };
 
     const btn = document.createElement('button');
-    btn.type = 'button'; btn.className = 'fs-button';
-    btn.setAttribute('aria-haspopup','listbox'); btn.setAttribute('aria-expanded','false');
-    btn.innerHTML = `<span class="fs-button-text">${currentText()}</span><span class="fs-caret"></span>`;
+    btn.type = 'button';
+    btn.className = 'fs-button';
+    btn.setAttribute('aria-haspopup','listbox');
+    btn.setAttribute('aria-expanded','false');
+    btn.innerHTML = `
+      <span class="fs-button-text truncate">${currentText()}</span>
+      <span class="fs-caret"></span>
+    `;
 
     const list = document.createElement('div');
-    list.className = 'fs-list'; list.setAttribute('role','listbox'); list.tabIndex = -1;
+    list.className = 'fs-list';
+    list.setAttribute('role','listbox');
 
-    [...sel.options].forEach((opt,i)=>{
+    [...sel.options].forEach(opt => {
       const item = document.createElement('div');
-      item.className = 'fs-item'; item.setAttribute('role','option');
-      item.dataset.value = opt.value; item.dataset.index = i;
-      item.innerHTML = isMulti && opt.value!=="" ? `<span class="fs-check"></span>${opt.textContent}` : opt.textContent;
+      item.className = 'fs-item';
+      item.dataset.value = opt.value;
+      item.dataset.selected = (!isMulti && opt.value === hidden.value) || (isMulti && selectedValues.has(opt.value))
+        ? 'true' : 'false';
+      item.innerHTML = isMulti
+        ? `<span class="fs-check"></span><span>${opt.textContent}</span>`
+        : `<span>${opt.textContent}</span>`;
 
-      const isSelected = !isMulti ? (opt.value === hidden.value) : selectedValues.has(opt.value);
-      if (isSelected) item.dataset.selected = 'true';
-
-      item.addEventListener('click',()=>{
-        if (!isMulti){
-          [...list.children].forEach(n=> n.dataset.selected = (n===item?'true':'false'));
-          hidden.value = opt.value; sel.value = opt.value;
-          updateBtn(); sel.dispatchEvent(new Event('change',{bubbles:true}));
-          close(); btn.focus();
+      item.addEventListener('click', () => {
+        if (!isMulti) {
+          hidden.value = opt.value;
+          [...list.children].forEach(n => n.dataset.selected = 'false');
+          item.dataset.selected = 'true';
         } else {
-          if (!opt.value){
+          if (opt.value === '') {
             selectedValues.clear();
-            [...list.children].forEach(n=> n.dataset.selected = (n.dataset.value===""?'true':'false'));
+            [...list.children].forEach(n => n.dataset.selected = n.dataset.value === '' ? 'true' : 'false');
           } else {
-            if (selectedValues.has(opt.value)){ selectedValues.delete(opt.value); item.dataset.selected='false'; }
-            else { selectedValues.add(opt.value); item.dataset.selected='true';
-              const anyItem = [...list.children].find(n=> n.dataset.value===""); if (anyItem) anyItem.dataset.selected='false';
+            if (selectedValues.has(opt.value)) {
+              selectedValues.delete(opt.value);
+              item.dataset.selected = 'false';
+            } else {
+              selectedValues.add(opt.value);
+              item.dataset.selected = 'true';
+              const anyItem = [...list.children].find(n => n.dataset.value === "");
+              if (anyItem) anyItem.dataset.selected = 'false';
             }
           }
-          hidden.value = [...selectedValues].join(','); updateBtn();
+          hidden.value = [...selectedValues].join(',');
         }
+        updateBtn();
+        close();
       });
 
       list.appendChild(item);
     });
 
-    wrap.appendChild(btn); wrap.appendChild(list);
+    wrap.appendChild(btn);
+    wrap.appendChild(list);
 
     function updateBtn(){ btn.querySelector('.fs-button-text').textContent = currentText(); }
-    function open(){ wrap.setAttribute('aria-expanded','true'); btn.setAttribute('aria-expanded','true');
-      const active = list.querySelector('[data-selected="true"]')||list.firstElementChild; active?.scrollIntoView({block:'nearest'});
-      document.addEventListener('click', onDoc, {capture:true}); document.addEventListener('keydown', onKey);
+
+    function open(){
+      wrap.setAttribute('aria-expanded','true');
+      btn.setAttribute('aria-expanded','true');
+      const active = list.querySelector('[data-selected="true"]') || list.firstElementChild;
+      active?.scrollIntoView({block:'nearest'});
+      document.addEventListener('click', onDoc, {capture:true});
+      document.addEventListener('keydown', onKey);
     }
-    function close(){ wrap.setAttribute('aria-expanded','false'); btn.setAttribute('aria-expanded','false');
-      document.removeEventListener('click', onDoc, {capture:true}); document.removeEventListener('keydown', onKey);
+    function close(){
+      wrap.setAttribute('aria-expanded','false');
+      btn.setAttribute('aria-expanded','false');
+      document.removeEventListener('click', onDoc, {capture:true});
+      document.removeEventListener('keydown', onKey);
     }
-    function toggle(){ wrap.getAttribute('aria-expanded')==='true' ? close() : open(); }
+    function toggle(){ wrap.getAttribute('aria-expanded') === 'true' ? close() : open(); }
     function onDoc(e){ if(!wrap.contains(e.target)) close(); }
     function onKey(e){
-      const items=[...list.querySelectorAll('.fs-item')]; const idx=items.findIndex(n=>n.dataset.selected==='true');
-      if(e.key==='Escape'){ close(); btn.focus(); }
-      else if(e.key==='Enter'){ close(); btn.focus(); }
-      else if(e.key==='ArrowDown'){ e.preventDefault(); const n=items[Math.min(idx+1,items.length-1)];
-        items.forEach(n=>n.removeAttribute('aria-activedescendant')); n.setAttribute('aria-activedescendant','true'); n.scrollIntoView({block:'nearest'});
-      } else if(e.key==='ArrowUp'){ e.preventDefault(); const p=items[Math.max(idx-1,0)];
-        items.forEach(n=>n.removeAttribute('aria-activedescendant')); p.setAttribute('aria-activedescendant','true'); p.scrollIntoView({block:'nearest'});
+      const items = [...list.querySelectorAll('.fs-item')];
+      const idx = items.findIndex(n => n.dataset.selected === 'true');
+      if(e.key === 'Escape'){ close(); btn.focus(); }
+      else if(e.key === 'Enter'){ close(); btn.focus(); }
+      else if(e.key === 'ArrowDown'){
+        e.preventDefault();
+        const n = items[Math.min(idx+1, items.length-1)];
+        items.forEach(n=>n.removeAttribute('aria-activedescendant'));
+        n.setAttribute('aria-activedescendant','true');
+        n.scrollIntoView({block:'nearest'});
+      } else if(e.key === 'ArrowUp'){
+        e.preventDefault();
+        const p = items[Math.max(idx-1,0)];
+        items.forEach(n=>n.removeAttribute('aria-activedescendant'));
+        p.setAttribute('aria-activedescendant','true');
+        p.scrollIntoView({block:'nearest'});
       }
     }
     btn.addEventListener('click',toggle);
@@ -310,7 +346,7 @@
   const customField = document.getElementById('customDaysField');
   const tpSelect = wrap.querySelector('select.fancy-select');
   const reflect = v => customField.classList.toggle('hidden', v !== '__custom__');
-  reflect(tpSelect.value||"");
+  reflect(tpSelect.value || "");
   tpSelect.addEventListener('change', e => reflect(e.target.value));
 })();
 
@@ -330,7 +366,7 @@ const loadMoreBtn = document.getElementById('loadMoreBtn');
 const loadMoreSpinner = document.getElementById('loadMoreSpinner');
 
 function jobCard(j){
-  const cardBG = "background:var(--panel); border-color:rgba(255,255,255,.08)";
+  const cardBG = "background:var(--panel); border-color:rgba(255,255,255,0.08)";
   return `
     <a href="${j.url}" target="_blank"
        class="block group rounded-2xl p-4 transition ring-1 hover:ring-indigo-400/50 hover:shadow-lg"
@@ -358,7 +394,7 @@ document.getElementById('f').addEventListener('submit', async (ev) => {
   DISPLAYED_IDS.clear();
   loadMoreWrap.classList.add('hidden');
   emptyEl.classList.add('hidden');
-  countEl.textContent = 'Searching...';
+  countEl.textContent = 'Searching…';
 
   const fd = new FormData(ev.target);
 
@@ -381,6 +417,26 @@ document.getElementById('f').addEventListener('submit', async (ev) => {
   const t0 = performance.now();
   try{
     const res = await fetch('/api/search?' + params.toString());
+
+    // Gestione rate limit / errori
+    if (!res.ok) {
+      let errData = null;
+      try {
+        errData = await res.json();
+      } catch (_) {}
+
+      if (res.status === 429 && errData && errData.message) {
+        countEl.textContent = errData.message;
+      } else {
+        countEl.textContent = `Error during search (HTTP ${res.status})`;
+      }
+
+      resultsEl.innerHTML = '';
+      emptyEl.classList.remove('hidden');
+      loadMoreWrap.classList.add('hidden');
+      return;
+    }
+
     const data = await res.json();
     const ms = Math.round(performance.now() - t0);
 
@@ -402,6 +458,7 @@ document.getElementById('f').addEventListener('submit', async (ev) => {
     console.error(e);
     countEl.textContent = 'Error while searching.';
     emptyEl.classList.remove('hidden');
+    loadMoreWrap.classList.add('hidden');
   }finally{
     spinner.classList.add('hidden');
     searchBtn.disabled = false;
@@ -422,6 +479,23 @@ async function loadMore(){
     params.set('pages', '1');
 
     const res = await fetch('/api/search?' + params.toString());
+
+    if (!res.ok) {
+      let errData = null;
+      try {
+        errData = await res.json();
+      } catch (_) {}
+
+      if (res.status === 429 && errData && errData.message) {
+        countEl.textContent = errData.message;
+      } else {
+        countEl.textContent = `Error during loading (HTTP ${res.status})`;
+      }
+
+      loadMoreWrap.classList.add('hidden');
+      return;
+    }
+
     const data = await res.json();
 
     if (!Array.isArray(data) || data.length === 0) {

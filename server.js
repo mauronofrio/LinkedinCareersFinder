@@ -10,12 +10,77 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+
+// Se usi un reverse proxy (es. Nginx) sulla VPS:
+app.set("trust proxy", true);
+
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use(cors());
 app.use(compression());
 app.use(express.static(path.join(__dirname, "public"))); // serve index.html
 
 const BASE = "https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search";
+
+/* ------------ RATE LIMIT / IP ------------ */
+
+const RATE_LIMIT_MAX = 10;                     // max richieste consentite
+const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;   // 1 ora
+const rateLimitMap = new Map();                // ip -> { count, windowStart }
+
+function getClientIp(req) {
+  const xfwd = req.headers["x-forwarded-for"];
+  if (typeof xfwd === "string" && xfwd.length > 0) {
+    // x-forwarded-for può avere una lista di IP "client, proxy1, proxy2"
+    return xfwd.split(",")[0].trim();
+  }
+  return req.ip || req.connection?.remoteAddress || "unknown";
+}
+
+// Middleware di rate limit SOLO per /api/search
+app.use((req, res, next) => {
+  if (!req.path.startsWith("/api/search")) {
+    return next();
+  }
+
+  const ip = getClientIp(req);
+  const now = Date.now();
+
+  let entry = rateLimitMap.get(ip);
+
+  // Se non esiste o la finestra è scaduta, resettiamo
+  if (!entry || now - entry.windowStart >= RATE_LIMIT_WINDOW_MS) {
+    entry = { count: 0, windowStart: now };
+  }
+
+  entry.count += 1;
+  rateLimitMap.set(ip, entry);
+
+  if (entry.count > RATE_LIMIT_MAX) {
+    const resetAt = entry.windowStart + RATE_LIMIT_WINDOW_MS;
+    const retryAfterMs = resetAt - now;
+
+    const retryAfterSeconds = Math.max(1, Math.round(retryAfterMs / 1000));
+    const mins = Math.floor(retryAfterSeconds / 60);
+    const secs = retryAfterSeconds % 60;
+
+    const blockUntilDate = new Date(resetAt);
+    const blockUntilLocal = blockUntilDate.toLocaleTimeString("it-IT", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit"
+    });
+
+    return res.status(429).json({
+      error: "RATE_LIMITED",
+      message: `You have exceeded the limit of ${RATE_LIMIT_MAX} requests per hour from this IP. ` +
+               `You can try again in ${mins} min ${secs} sec (until ${blockUntilLocal}).`,
+      retryAfterSeconds,
+      blockUntil: blockUntilDate.toISOString()
+    });
+  }
+
+  next();
+});
 
 /* ------------ headers/fetch helper ------------ */
 function makeHeaders(lang = "en_US", refererQS = "") {
@@ -29,7 +94,7 @@ function makeHeaders(lang = "en_US", refererQS = "") {
     "Accept":
       "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
     "Accept-Language": acceptLang,
-//    "Cookie": cookieLang,
+    // "Cookie": cookieLang,
     "priority":"u=0, i",
     "Referer": referer,
     "sec-ch-ua":'"Not;A=Brand";v="99", "Google Chrome";v="139", "Chromium";v="139"',
@@ -42,7 +107,7 @@ function makeHeaders(lang = "en_US", refererQS = "") {
     "upgrade-insecure-requests":"1",
     "User-Agent":
       "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36"
-//    "X-Requested-With": "XMLHttpRequest"
+    // "X-Requested-With": "XMLHttpRequest"
   };
 }
 
