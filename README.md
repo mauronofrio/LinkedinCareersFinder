@@ -56,6 +56,7 @@ careers-finder/
 ├─ server.js
 └─ public/
    └─ index.html
+   └─ favicon.ico
 ```
 
 ### 3) Install dependencies
@@ -86,6 +87,10 @@ sudo ufw status
 > export PORT=8080
 > npm start
 > ```
+
+## Try it
+
+A limited version is available here: https://www.careers-finder.work/
 
 ## License
 
