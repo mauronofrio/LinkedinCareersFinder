@@ -19,6 +19,11 @@ app.use(cors());
 app.use(compression());
 app.use(express.static(path.join(__dirname, "public"))); // serve index.html
 
+app.use('/api', (req, res, next) => {
+  res.setHeader("X-Robots-Tag", "noindex, nofollow");
+  next();
+});
+
 const BASE = "https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search";
 
 /* ------------ RATE LIMIT / IP ------------ */
